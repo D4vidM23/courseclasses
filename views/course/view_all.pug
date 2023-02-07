@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+    h3 Courses
+    table
+        thead
+            tr
+                th
+                th
+                th
+                th
+        tbody
+            each course in courses
+                tr
+                    td= course.name
+                    td= course.instructor_name
+                    td= course.department
