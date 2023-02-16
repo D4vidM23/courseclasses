@@ -1,4 +1,4 @@
-const {Student} = require('../models')
+const {Student, Course} = require('../models')
 
 module.exports.viewAll = async function (req, res) {
     const students = await Student.findAll();
@@ -6,7 +6,9 @@ module.exports.viewAll = async function (req, res) {
 }
 
 module.exports.viewProfile = async function (req, res) {
-    const student = await Student.findByPk(req.params.id);
+    const student = await Student.findByPk(req.params.id, {
+        include: 'courses'
+    });
     res.render('student/profile', {student});
 }
 
@@ -53,4 +55,13 @@ module.exports.deleteStudent = async function(req, res){
         }
     });
     res.redirect(`/students`);
+}
+
+function studentHasCourse(student, course){
+    for (let i=0; i<student.course.length; i++){
+        if (course.id === student.courses[i].id){
+            return true
+        }
+    }
+    return false
 }
