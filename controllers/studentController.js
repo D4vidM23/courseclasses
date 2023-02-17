@@ -1,4 +1,4 @@
-const {Student, Course} = require('../models')
+const {Student, Course, StudentCourses} = require('../models')
 
 module.exports.viewAll = async function (req, res) {
     const students = await Student.findAll();
@@ -9,7 +9,14 @@ module.exports.viewProfile = async function (req, res) {
     const student = await Student.findByPk(req.params.id, {
         include: 'courses'
     });
-    res.render('student/profile', {student});
+    const courses = await Course.findAll();
+    let availableCourses = [];
+    for (let i=0; i<courses.length; i++){
+        if(!studentHasCourse(student, courses[i])){
+            availableCourses.push(courses[i]);
+        }
+    }
+    res.render('student/profile', {student, availableCourses});
 }
 
 module.exports.renderEditForm = async function(req, res){
@@ -58,10 +65,29 @@ module.exports.deleteStudent = async function(req, res){
 }
 
 function studentHasCourse(student, course){
-    for (let i=0; i<student.course.length; i++){
+    for (let i=0; i<student.courses.length; i++){
         if (course.id === student.courses[i].id){
             return true
         }
     }
     return false
 }
+
+module.exports.enrollStudent = async function (req, res) {
+    await StudentCourses.create({
+        student_id: req.params.studentId,
+        course_id: req.body.course
+    })
+    res.redirect(`/students/profile/${req.params.studentId}`);
+}
+
+module.exports.removeCourse = async function(req, res){
+    await StudentCourses.destroy({
+        where: {
+            student_id: req.params.studentId,
+            course_id: req.params.courseId
+        }
+    });
+    res.redirect(`/students/profile/${req.params.studentId}`)
+}
+
