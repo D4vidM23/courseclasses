@@ -14,7 +14,7 @@ mixin courseForm(course, departments, saveUrl, cancelUrl)
                 label(for='department') Department
                 select(id='department' name='department')
                     each department in departments
-                        option(value=department selected = (department === course.department))
+                        option(value=department selected = (department === course.department)) #{department}
 
             div.form-input
                 label(for='description') Description

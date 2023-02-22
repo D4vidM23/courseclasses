@@ -10,7 +10,7 @@ module.exports.viewProfile= async function(req, res){
     const course = await Course.findByPk(req.params.id, {
         include: 'students'
     });
-    const students = await Course.findAll();
+    const students = await Student.findAll();
     let availableStudents = [];
     for (let i=0; i<students.length; i++){
         if (!courseHasStudent(course, students[i])){
